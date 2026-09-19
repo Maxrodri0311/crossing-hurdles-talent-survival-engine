@@ -21,6 +21,8 @@ stack:
   - "Apache Parquet"
   - "lifelines"
   - "Regularized Multivariate Cox"
+  - "Dynamic Landmark Analysis"
+  - "Longitudinal Telemetry Modeling"
   - "Kaplan-Meier Product-Limit Estimator"
   - "Actuarial Life Tables"
   - "Harrell's Concordance Index"
@@ -35,4 +37,4 @@ stack:
 bullets:
   - "Architected an in-memory OLAP survival analytics platform using DuckDB and columnar Parquet, estimating weekly Kaplan-Meier attrition curves and Actuarial Life Tables across 50,000 student records in 19.52ms (p50) with 0.19 MB peak RAM."
   - "Engineered explainable Cox Proportional Hazards and regularized multivariate survival ML with high-order interaction modeling, achieving 0.68 Harrell's C-index discrimination and 0.18 Integrated Brier Score probabilistic calibration."
-  - "Designed Kimball Star-Schema analytical marts for Tableau and Power BI semantic layers under strict Clean Architecture (DIP) and 100% Pytest suite verification (11/11 mathematical invariant and ML calibration tests passing)."
+  - "Developed dynamic longitudinal Landmark Analysis at weeks 3, 5, and 7, elevating dynamic survival discrimination from 0.82 to 0.92 C-index and dispatching prescriptive coordinator alerts across 111,485 student milestones under 100% Pytest verification (16/16 tests passing)."

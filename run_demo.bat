@@ -30,7 +30,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [2/4] Ejecutando Motor Analitico Core (Kaplan-Meier, Tablas Actuariales y Hazard Ratios)...
+echo [2/6] Ejecutando Motor Analitico Core (Kaplan-Meier, Tablas Actuariales y Hazard Ratios)...
 %PY_CMD% src\core_engine.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el motor analitico.
@@ -38,7 +38,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [3/5] Entrenando Motor de Machine Learning de Supervivencia y Calibracion IPCW...
+echo [3/6] Entrenando Motor de Machine Learning de Supervivencia y Calibracion IPCW...
 %PY_CMD% src\survival_ml.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el motor de Machine Learning de supervivencia.
@@ -46,7 +46,15 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [4/5] Ejecutando Suite Automatizada de Pruebas Unitarias (Pytest: 11 tests)...
+echo [4/6] Ejecutando Telemetria Longitudinal y Landmark Analysis en Semanas Criticas (3, 5, 7)...
+%PY_CMD% src\longitudinal_engine.py
+if %ERRORLEVEL% NEQ 0 (
+    echo [ERROR] Fallo en el motor de telemetria longitudinal y landmark analysis.
+    exit /b %ERRORLEVEL%
+)
+
+echo.
+echo [5/6] Ejecutando Suite Automatizada de Pruebas Unitarias (Pytest: 16 tests)...
 %PY_CMD% -m pytest tests\ -v
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Pruebas unitarias fallidas.
@@ -54,7 +62,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [5/5] Ejecutando Benchmarks Cuantitativos de Latencia y Memoria (50 iteraciones)...
+echo [6/6] Ejecutando Benchmarks Cuantitativos de Latencia y Memoria (50 iteraciones)...
 %PY_CMD% tests\benchmark.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el benchmark de latencia.
@@ -62,6 +70,6 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo ======================================================================
-echo  [OK] Ejecucion Exitosa: Pipeline, Survival ML y Pruebas al 100%%
+echo  [OK] Ejecucion Exitosa: Pipeline, Survival ML, Landmarks y 16 Tests al 100%%
 echo ======================================================================
 endlocal
