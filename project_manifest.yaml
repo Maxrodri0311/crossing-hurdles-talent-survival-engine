@@ -19,9 +19,12 @@ benchmarks:
 stack:
   - "DuckDB"
   - "Apache Parquet"
+  - "lifelines"
+  - "Regularized Multivariate Cox"
   - "Kaplan-Meier Product-Limit Estimator"
   - "Actuarial Life Tables"
-  - "Cox Proportional Hazards"
+  - "Harrell's Concordance Index"
+  - "IPCW Brier Score Calibration"
   - "Tableau"
   - "Power BI DAX"
   - "Python 3.11"
@@ -31,5 +34,5 @@ stack:
 
 bullets:
   - "Architected an in-memory OLAP survival analytics platform using DuckDB and columnar Parquet, estimating weekly Kaplan-Meier attrition curves and Actuarial Life Tables across 50,000 student records in 19.52ms (p50) with 0.19 MB peak RAM."
-  - "Engineered explainable Cox Proportional Hazards hazard ratio attribution, identifying that feedback latency >36h and weekly time deficits (<15h) multiply student drop-off hazard by 1.87x and 2.64x, driving proactive coordinator interventions."
-  - "Designed Kimball Star-Schema analytical marts for Tableau and Power BI semantic layers under strict Clean Architecture (DIP) and 100% Pytest suite verification (6/6 integration & mathematical invariant tests passing)."
+  - "Engineered explainable Cox Proportional Hazards and regularized multivariate survival ML with high-order interaction modeling, achieving 0.68 Harrell's C-index discrimination and 0.18 Integrated Brier Score probabilistic calibration."
+  - "Designed Kimball Star-Schema analytical marts for Tableau and Power BI semantic layers under strict Clean Architecture (DIP) and 100% Pytest suite verification (11/11 mathematical invariant and ML calibration tests passing)."

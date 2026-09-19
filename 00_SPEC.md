@@ -71,6 +71,17 @@ $$\text{CI}_{95\%} = \left[ \hat{S}(t) - 1.96 \cdot \sqrt{\widehat{\text{Var}}(\
 $$\text{HR} = \frac{h_1(t)}{h_0(t)} = \frac{d_1 / T_1}{d_0 / T_0}$$
 Donde $d_1, d_0$ son las deserciones en el grupo de alto riesgo y control, y $T_1, T_0$ son las semanas-persona totales acumuladas.
 
+### E. Índice de Concordancia de Harrell (C-Index)
+$$C = \frac{\sum_{i,j: T_i < T_j, \delta_i = 1} \mathbf{1}(\hat{r}_i > \hat{r}_j)}{\sum_{i,j: T_i < T_j, \delta_i = 1} 1}$$
+Evalúa la capacidad de discriminación del modelo: la proporción de pares ordenados donde el modelo predice un riesgo relativo $\hat{r}_i$ superior para el estudiante que abandonó antes.
+- $C = 0.50$: Clasificador aleatorio sin valor predictivo.
+- $C \ge 0.68$: Capacidad discriminativa sólida demostrada en producción.
+
+### F. Calibración Probabilística: Brier Score Dependiente del Tiempo e IBS (IPCW)
+$$\text{BS}(t) = \frac{1}{N} \sum_{i=1}^N \left[ \frac{\hat{S}(t \mid x_i)^2 \cdot \mathbf{1}(T_i \le t, \delta_i = 1)}{G(T_i)} + \frac{(1 - \hat{S}(t \mid x_i))^2 \cdot \mathbf{1}(T_i > t)}{G(t)} \right]$$
+$$\text{IBS} = \frac{1}{t_{\max} - t_{\min}} \int_{t_{\min}}^{t_{\max}} \text{BS}(t) \, dt$$
+Donde $G(t)$ es el estimador de Kaplan-Meier de la distribución de censura (Inverse Probability of Censoring Weighting). Un $\text{IBS} = 0.1787$ (< 0.20) garantiza calibración probabilística estricta.
+
 ---
 
 ## 📊 4. Guía de Integración para Tableau y Power BI
@@ -82,6 +93,8 @@ erDiagram
     FACT_STUDENT_SURVIVAL ||--o{ DIM_KAPLAN_MEIER_OVERALL : "compares with"
     FACT_STUDENT_SURVIVAL ||--o{ DIM_ACTUARIAL_LIFE_TABLE : "aggregates to"
     FACT_STUDENT_SURVIVAL ||--o{ DIM_EXPLAINABLE_HAZARD_RATIOS : "evaluates risk"
+    FACT_STUDENT_SURVIVAL ||--o{ DIM_MULTIVARIATE_HAZARD_RATIOS : "predicts hazard"
+    FACT_STUDENT_SURVIVAL ||--o{ DIM_SURVIVAL_MODEL_EVALUATION : "validates calibration"
 
     FACT_STUDENT_SURVIVAL {
         int candidate_id PK
@@ -95,12 +108,20 @@ erDiagram
         int event_observed
         string survival_risk_stratum
     }
-    DIM_EXPLAINABLE_HAZARD_RATIOS {
-        string learning_barrier PK
+    DIM_MULTIVARIATE_HAZARD_RATIOS {
+        string feature_name PK
         float hazard_ratio
-        float ci_95_lower
-        float ci_95_upper
-        string recommended_business_action
+        float hr_ci_95_lower
+        float hr_ci_95_upper
+        float p_value
+        string strategic_business_context
+    }
+    DIM_SURVIVAL_MODEL_EVALUATION {
+        string model_architecture
+        float concordance_index_c
+        float integrated_brier_score
+        float evaluation_horizon_week PK
+        float time_dependent_brier_score
     }
 ```
 

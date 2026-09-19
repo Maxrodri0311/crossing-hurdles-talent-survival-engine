@@ -38,15 +38,23 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [3/4] Ejecutando Suite Automatizada de Pruebas Unitarias (Pytest)...
-%PY_CMD% -m pytest tests\test_suite.py -v
+echo [3/5] Entrenando Motor de Machine Learning de Supervivencia y Calibracion IPCW...
+%PY_CMD% src\survival_ml.py
+if %ERRORLEVEL% NEQ 0 (
+    echo [ERROR] Fallo en el motor de Machine Learning de supervivencia.
+    exit /b %ERRORLEVEL%
+)
+
+echo.
+echo [4/5] Ejecutando Suite Automatizada de Pruebas Unitarias (Pytest: 11 tests)...
+%PY_CMD% -m pytest tests\ -v
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Pruebas unitarias fallidas.
     exit /b %ERRORLEVEL%
 )
 
 echo.
-echo [4/4] Ejecutando Benchmarks Cuantitativos de Latencia y Memoria (50 iteraciones)...
+echo [5/5] Ejecutando Benchmarks Cuantitativos de Latencia y Memoria (50 iteraciones)...
 %PY_CMD% tests\benchmark.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el benchmark de latencia.
@@ -54,6 +62,6 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo ======================================================================
-echo  [OK] Ejecucion Exitosa: Pipeline, Pruebas y Benchmarks Completados al 100%%
+echo  [OK] Ejecucion Exitosa: Pipeline, Survival ML y Pruebas al 100%%
 echo ======================================================================
 endlocal
