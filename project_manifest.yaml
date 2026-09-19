@@ -1,0 +1,35 @@
+# ==============================================================================
+# GHOST PROJECT CONTRACT MANIFEST (Profile-as-Code SSOT)
+# ==============================================================================
+id: "GP-023"
+name: "Crossing Hurdles - Talent Retention & Learning Barrier Survival Engine"
+role_title: "Senior Data Scientist & Solutions Architect"
+employer_name: "Independent Practice"
+location: "Remote"
+repo_url: "https://github.com/Maxrodri0311/crossing-hurdles-talent-survival-engine"
+domain_cluster: "EdTech, Career Acceleration & Human Capital Analytics"
+
+benchmarks:
+  p50_kpi_latency_ms: 19.52
+  p95_kpi_latency_ms: 26.53
+  peak_ram_mb: 0.19
+  throughput_records_sec: 50000
+  test_pass_rate_pct: 100
+
+stack:
+  - "DuckDB"
+  - "Apache Parquet"
+  - "Kaplan-Meier Product-Limit Estimator"
+  - "Actuarial Life Tables"
+  - "Cox Proportional Hazards"
+  - "Tableau"
+  - "Power BI DAX"
+  - "Python 3.11"
+  - "Pytest"
+  - "Pydantic v2"
+  - "Clean Architecture (DIP)"
+
+bullets:
+  - "Architected an in-memory OLAP survival analytics platform using DuckDB and columnar Parquet, estimating weekly Kaplan-Meier attrition curves and Actuarial Life Tables across 50,000 student records in 19.52ms (p50) with 0.19 MB peak RAM."
+  - "Engineered explainable Cox Proportional Hazards hazard ratio attribution, identifying that feedback latency >36h and weekly time deficits (<15h) multiply student drop-off hazard by 1.87x and 2.64x, driving proactive coordinator interventions."
+  - "Designed Kimball Star-Schema analytical marts for Tableau and Power BI semantic layers under strict Clean Architecture (DIP) and 100% Pytest suite verification (6/6 integration & mathematical invariant tests passing)."
