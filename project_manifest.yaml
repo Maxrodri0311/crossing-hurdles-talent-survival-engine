@@ -8,6 +8,7 @@ employer_name: "Independent Practice"
 location: "Remote"
 repo_url: "https://github.com/Maxrodri0311/crossing-hurdles-talent-survival-engine"
 domain_cluster: "EdTech, Career Acceleration & Human Capital Analytics"
+delivery_paradigm: "INTERACTIVE_WEB_PRODUCT & EXPLAINABLE_AI_INFERENCE"
 
 benchmarks:
   p50_kpi_latency_ms: 19.52
@@ -15,6 +16,12 @@ benchmarks:
   peak_ram_mb: 0.19
   throughput_records_sec: 50000
   test_pass_rate_pct: 100
+  total_unit_tests: 27
+  empirical_conformal_coverage_pct: 90.04
+  conformal_confidence_level_pct: 90.00
+  persuadables_identified: 18071
+  tuition_rescued_usd: 1848926
+  knapsack_net_roi_pct: 1269.6
 
 stack:
   - "DuckDB"
@@ -26,13 +33,15 @@ stack:
   - "Causal Uplift Modeling (HTE)"
   - "Counterfactual Survival Estimation"
   - "Budgeted Knapsack Optimization"
+  - "Split-Conformal Prediction (90% Finite-Sample Bounds)"
+  - "Interactive Web Simulator (HTML5/Canvas/Vanilla JS)"
   - "Kaplan-Meier Product-Limit Estimator"
   - "Actuarial Life Tables"
   - "Harrell's Concordance Index"
   - "IPCW Brier Score Calibration"
   - "Tableau"
   - "Power BI DAX"
-  - "Python 3.11"
+  - "Python 3.14"
   - "Pytest"
   - "Pydantic v2"
   - "Clean Architecture (DIP)"
@@ -40,4 +49,5 @@ stack:
 bullets:
   - "Architected an in-memory OLAP survival analytics platform using DuckDB and columnar Parquet, estimating weekly Kaplan-Meier attrition curves and Actuarial Life Tables across 50,000 student records in 19.52ms (p50) with 0.19 MB peak RAM."
   - "Engineered explainable Cox Proportional Hazards and dynamic longitudinal Landmark Analysis (C-index 0.82 -> 0.92), generating calibrated survival probabilities (0.18 IBS) and proactive alerts across 111,485 student milestones."
-  - "Built a Causal Uplift & Knapsack budget optimizer partitioning 50,000 students into 4 quadrants (18,071 Persuadables), rescuing 410.9 graduates and generating $1.85M USD in preserved tuition with 1,269.6% Net ROI under 100% Pytest verification (21/21 tests passing)."
+  - "Built a Causal Uplift & Knapsack budget optimizer partitioning 50,000 students into 4 quadrants (18,071 Persuadables), rescuing 410.9 graduates and preserving $1.85M USD in tuition with 1,269.6% Net ROI under 100% Pytest verification."
+  - "Developed a Split-Conformalized survival engine guaranteeing 90% finite-sample drop-out lower bounds (90.04% empirical coverage) integrated into a zero-dependency interactive web decision sandbox (27/27 unit tests passing)."

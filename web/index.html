@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crossing Hurdles: Talent Survival & Causal Decision Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #090D16;
+      --bg-secondary: #0F172A;
+      --bg-card: #1E293B;
+      --bg-glass: rgba(30, 41, 59, 0.7);
+      --border-color: rgba(56, 189, 248, 0.2);
+      --border-hover: rgba(56, 189, 248, 0.5);
+      --text-primary: #F8FAFC;
+      --text-muted: #94A3B8;
+      --accent-cyan: #38BDF8;
+      --accent-emerald: #10B981;
+      --accent-amber: #F59E0B;
+      --accent-rose: #F43F5E;
+      --accent-indigo: #818CF8;
+      --font-sans: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.06) 0%, transparent 40%);
+    }
+
+    header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+      color: #000;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .header-tags {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .control-panel {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.75rem;
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .panel-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-header p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .slider-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+    }
+
+    .slider-value {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--accent-cyan);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      background: #334155;
+      border-radius: 3px;
+      outline: none;
+      -webkit-appearance: none;
+      accent-color: var(--accent-cyan);
+    }
+
+    .metrics-summary {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+
+    .metric-val-highlight {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--accent-emerald);
+      font-size: 1.05rem;
+    }
+
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.25rem;
+      backdrop-filter: blur(12px);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-hover);
+    }
+
+    .kpi-title {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .kpi-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      margin-top: 0.25rem;
+    }
+
+    .kpi-subtext {
+      font-size: 0.75rem;
+      color: var(--accent-emerald);
+      margin-top: 0.25rem;
+    }
+
+    .chart-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.75rem;
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.8rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .canvas-container {
+      position: relative;
+      height: 340px;
+      width: 100%;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    .info-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    th, td {
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    th {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .quadrant-pill {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .pill-persuadable { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+    .pill-sure-thing { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); }
+    .pill-lost-cause { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
+    .pill-moderate { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+
+    footer {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    footer a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <span class="brand-badge">GP-023</span>
+      <div>
+        <div class="brand-title">Crossing Hurdles: Talent Survival & Causal Simulator</div>
+        <div class="brand-subtitle">Executive Decision Cockpit & Counterfactual Policy Sandbox</div>
+      </div>
+    </div>
+    <div class="header-tags">
+      <span class="tag">DuckDB OLAP</span>
+      <span class="tag">Conformal Bounds (90%)</span>
+      <span class="tag">Causal Uplift</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Left Sidebar: Controls -->
+    <aside class="control-panel">
+      <div class="panel-header">
+        <h2>🎛️ Policy Lever Sandbox</h2>
+        <p>Ajusta las palancas operativas para proyectar la curva contrafactual de supervivencia y el retorno de inversión.</p>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label-row">
+          <span>SLA Feedback Mentor</span>
+          <span class="slider-value" id="val-sla">18 horas</span>
+        </div>
+        <input type="range" id="slider-sla" min="8" max="48" step="2" value="18" />
+        <span style="font-size:0.75rem; color:var(--text-muted)">Línea base actual: 36.4 horas</span>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label-row">
+          <span>Refuerzo Semanal de Horas</span>
+          <span class="slider-value" id="val-hours">+3 horas/sem</span>
+        </div>
+        <input type="range" id="slider-hours" min="0" max="6" step="1" value="3" />
+        <span style="font-size:0.75rem; color:var(--text-muted)">Talleres y grupos de estudio asíncronos</span>
+      </div>
+
+      <div class="slider-group">
+        <div class="slider-label-row">
+          <span>Presupuesto Mentores (Knapsack)</span>
+          <span class="slider-value" id="val-budget">3,000 horas</span>
+        </div>
+        <input type="range" id="slider-budget" min="600" max="6000" step="300" value="3000" />
+        <span style="font-size:0.75rem; color:var(--text-muted)">$45 USD/hora | Sprint 1-a-1: 3.0h ($135)</span>
+      </div>
+
+      <div class="metrics-summary">
+        <div class="metric-row">
+          <span>Estudiantes Tratados (Top Uplift):</span>
+          <span class="metric-val-highlight" id="summary-treated">1,000</span>
+        </div>
+        <div class="metric-row">
+          <span>Inversión en Mentoría:</span>
+          <span class="metric-val-highlight" style="color:var(--accent-amber)" id="summary-cost">$135,000</span>
+        </div>
+        <div class="metric-row">
+          <span>Colegiatura Rescatada:</span>
+          <span class="metric-val-highlight" id="summary-revenue">$1,848,926</span>
+        </div>
+        <div class="metric-row" style="border-top:1px dashed rgba(255,255,255,0.1); padding-top:0.5rem">
+          <span>Retorno Neto de Inversión (ROI):</span>
+          <span class="metric-val-highlight" style="color:var(--accent-cyan); font-size:1.2rem" id="summary-roi">1,269.6%</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Content Area -->
+    <section class="content-area">
+      <!-- KPI Top Row -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">Graduados Rescatados</div>
+          <div class="kpi-number" style="color:var(--accent-emerald)" id="kpi-rescued">410.9</div>
+          <div class="kpi-subtext">+16.4% Uplift Causal Promedio</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Beneficio Financiero Neto</div>
+          <div class="kpi-number" style="color:var(--accent-cyan)" id="kpi-profit">$1.71M</div>
+          <div class="kpi-subtext">Colegiatura ($4,500) - Costo ($135)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Retención Final Semana 16</div>
+          <div class="kpi-number" style="color:var(--text-primary)" id="kpi-retention">64.5%</div>
+          <div class="kpi-subtext" id="kpi-retention-delta">vs 48.1% Línea Base (+16.4%)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Garantía Conformal 90%</div>
+          <div class="kpi-number" style="color:var(--accent-indigo)" id="kpi-conformal">90.04%</div>
+          <div class="kpi-subtext">Cobertura Matemática Finita</div>
+        </div>
+      </div>
+
+      <!-- Main Interactive Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <h3 style="font-size:1.1rem; font-weight:600">Curvas de Supervivencia: Línea Base vs Política Contrafactual</h3>
+            <p style="font-size:0.8rem; color:var(--text-muted)">Estimación Actuarial y Causal proyectada a lo largo del currículo de 16 semanas.</p>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#64748B"></span>
+              <span>Línea Base Histórica</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:var(--accent-cyan)"></span>
+              <span>Política Activa (Simulada)</span>
+            </div>
+          </div>
+        </div>
+        <div class="canvas-container">
+          <canvas id="survivalChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Bottom Grids: Quadrants & Conformal Tiers -->
+      <div class="bottom-grid">
+        <div class="info-card">
+          <h3>🎯 4 Cuadrantes de Uplift Causal (50k Candidatos)</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Cuadrante</th>
+                <th>Candidatos</th>
+                <th>Uplift Promedio</th>
+                <th>Estrategia Recomendada</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="quadrant-pill pill-persuadable">PERSUADABLE</span></td>
+                <td><strong>18,071 (36.1%)</strong></td>
+                <td style="color:var(--accent-emerald)">+37.2%</td>
+                <td>100% de capacidad de mentoría</td>
+              </tr>
+              <tr>
+                <td><span class="quadrant-pill pill-sure-thing">SURE_THING</span></td>
+                <td>7,128 (14.3%)</td>
+                <td>+2.1%</td>
+                <td>Autonomía (Cero gasto extra)</td>
+              </tr>
+              <tr>
+                <td><span class="quadrant-pill pill-moderate">MODERATE</span></td>
+                <td>20,529 (41.1%)</td>
+                <td>+9.4%</td>
+                <td>Talleres y grabaciones asíncronas</td>
+              </tr>
+              <tr>
+                <td><span class="quadrant-pill pill-lost-cause">LOST_CAUSE</span></td>
+                <td>4,005 (8.0%)</td>
+                <td>+4.2%</td>
+                <td>Nivelación previa o diferimiento</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-card">
+          <h3>🛡️ Conformal Prediction: Garantías de Runway al 90%</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Nivel de Runway</th>
+                <th>Candidatos</th>
+                <th>Límite Inferior</th>
+                <th>Tasa Deserción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong style="color:var(--accent-rose)">IMMINENT_CRITICAL</strong></td>
+                <td>35,266</td>
+                <td>1.4 semanas</td>
+                <td>63.9%</td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--accent-amber)">ACCELERATED_MONITOR</strong></td>
+                <td>14,734</td>
+                <td>4.8 semanas</td>
+                <td>23.4%</td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--accent-cyan)">STABLE_RUNWAY</strong></td>
+                <td>--</td>
+                <td>8.5 semanas</td>
+                <td>8.2%</td>
+              </tr>
+              <tr>
+                <td><strong style="color:var(--accent-emerald)">HIGH_CONFIDENCE</strong></td>
+                <td>--</td>
+                <td>14.0 semanas</td>
+                <td>1.5%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>Crossing Hurdles — Talent Retention & Learning Barrier Survival Engine (GP-023)</div>
+    <div>Ingeniero Líder: <a href="https://github.com/Maxrodri0311" target="_blank">Maximiliano Rodriguez</a> &nbsp;•&nbsp; <a href="mailto:maxrodri0311@gmail.com">maxrodri0311@gmail.com</a></div>
+  </footer>
+
+  <script>
+    // Baseline Actuarial Life Table Curve (Weeks 0 to 16)
+    const BASELINE_CURVE = [
+      1.0000, 0.9981, 0.9591, 0.8956, 0.8229, 0.7489, 0.6809, 0.6232,
+      0.5749, 0.5401, 0.5152, 0.4998, 0.4901, 0.4850, 0.4821, 0.4811, 0.4810
+    ];
+
+    const TUITION_VALUE = 4500.0;
+    const SPRINT_COST = 135.0; // 3 hours @ $45/h
+
+    // DOM Elements
+    const sliderSla = document.getElementById('slider-sla');
+    const sliderHours = document.getElementById('slider-hours');
+    const sliderBudget = document.getElementById('slider-budget');
+
+    const valSla = document.getElementById('val-sla');
+    const valHours = document.getElementById('val-hours');
+    const valBudget = document.getElementById('val-budget');
+
+    const summaryTreated = document.getElementById('summary-treated');
+    const summaryCost = document.getElementById('summary-cost');
+    const summaryRevenue = document.getElementById('summary-revenue');
+    const summaryRoi = document.getElementById('summary-roi');
+
+    const kpiRescued = document.getElementById('kpi-rescued');
+    const kpiProfit = document.getElementById('kpi-profit');
+    const kpiRetention = document.getElementById('kpi-retention');
+    const kpiRetentionDelta = document.getElementById('kpi-retention-delta');
+
+    const canvas = document.getElementById('survivalChart');
+    const ctx = canvas.getContext('2d');
+
+    function updateSimulation() {
+      const sla = parseFloat(sliderSla.value);
+      const addHours = parseFloat(sliderHours.value);
+      const budget = parseFloat(sliderBudget.value);
+
+      // Labels
+      valSla.textContent = `${sla} horas`;
+      valHours.textContent = `+${addHours} horas/sem`;
+      valBudget.textContent = `${budget.toLocaleString()} horas`;
+
+      // Causal Math:
+      const maxInterventions = Math.floor(budget / 3.0);
+      const treated = Math.min(18071, maxInterventions);
+      
+      // SLA unblocking effect (baseline is 36.4h, min 8h)
+      const slaLift = Math.max(0, (36.4 - sla) * 0.0035);
+      // Study hours support effect
+      const hoursLift = addHours * 0.018;
+      // Knapsack concentration effect
+      const avgUpliftInTreated = Math.max(0.20, 0.44 - (treated / 18071) * 0.18);
+      const rescuedGrads = Math.round(treated * avgUpliftInTreated * 10) / 10;
+
+      // Financials
+      const totalCost = treated * SPRINT_COST;
+      const rescuedRev = rescuedGrads * TUITION_VALUE;
+      const netProfit = rescuedRev - totalCost;
+      const roi = totalCost > 0 ? (netProfit / totalCost) * 100 : 0;
+
+      // Shifted Survival Curve
+      const finalLift = (rescuedGrads / 50000.0) + slaLift + hoursLift;
+      const simulatedCurve = BASELINE_CURVE.map((s, w) => {
+        if (w === 0) return 1.0;
+        const progress = Math.min(1.0, w / 8.0);
+        return Math.min(0.96, s + finalLift * progress);
+      });
+
+      // Update UI elements
+      summaryTreated.textContent = treated.toLocaleString();
+      summaryCost.textContent = `$${Math.round(totalCost).toLocaleString()}`;
+      summaryRevenue.textContent = `$${Math.round(rescuedRev).toLocaleString()}`;
+      summaryRoi.textContent = `${roi.toFixed(1)}%`;
+
+      kpiRescued.textContent = rescuedGrads.toLocaleString();
+      kpiProfit.textContent = `$${(netProfit / 1000000).toFixed(2)}M`;
+      const finalRet = simulatedCurve[16] * 100;
+      kpiRetention.textContent = `${finalRet.toFixed(1)}%`;
+      const deltaPoints = (finalRet - 48.1).toFixed(1);
+      kpiRetentionDelta.textContent = `vs 48.1% Línea Base (+${deltaPoints}%)`;
+
+      drawChart(simulatedCurve);
+    }
+
+    function drawChart(simulatedCurve) {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+      const padL = 50;
+      const padR = 20;
+      const padT = 20;
+      const padB = 40;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Grid & Axes
+      const plotW = w - padL - padR;
+      const plotH = h - padT - padB;
+
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.lineWidth = 1;
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = '11px JetBrains Mono';
+
+      // Y-axis grid (0% to 100%)
+      for (let yPct = 0; yPct <= 100; yPct += 20) {
+        const yPos = padT + plotH * (1.0 - yPct / 100);
+        ctx.beginPath();
+        ctx.moveTo(padL, yPos);
+        ctx.lineTo(w - padR, yPos);
+        ctx.stroke();
+        ctx.fillText(`${yPct}%`, 10, yPos + 4);
+      }
+
+      // X-axis (Weeks 0 to 16)
+      for (let week = 0; week <= 16; week += 2) {
+        const xPos = padL + (week / 16.0) * plotW;
+        ctx.beginPath();
+        ctx.moveTo(xPos, padT);
+        ctx.lineTo(xPos, padT + plotH);
+        ctx.stroke();
+        ctx.fillText(`W${week}`, xPos - 8, h - 15);
+      }
+
+      function drawLine(curve, strokeStyle, fillStyle, isDashed) {
+        ctx.save();
+        ctx.beginPath();
+        if (isDashed) ctx.setLineDash([5, 5]);
+
+        curve.forEach((val, idx) => {
+          const x = padL + (idx / 16.0) * plotW;
+          const y = padT + plotH * (1.0 - val);
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+
+        ctx.strokeStyle = strokeStyle;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        if (fillStyle) {
+          ctx.lineTo(padL + plotW, padT + plotH);
+          ctx.lineTo(padL, padT + plotH);
+          ctx.closePath();
+          ctx.fillStyle = fillStyle;
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      // 1. Draw Baseline Curve
+      drawLine(BASELINE_CURVE, '#64748B', null, true);
+
+      // 2. Draw Simulated Curve with gradient
+      const grad = ctx.createLinearGradient(0, padT, 0, padT + plotH);
+      grad.addColorStop(0, 'rgba(56, 189, 248, 0.25)');
+      grad.addColorStop(1, 'rgba(56, 189, 248, 0.00)');
+      drawLine(simulatedCurve, '#38BDF8', grad, false);
+
+      // Highlight Critical Hurdle Zone (Weeks 3 to 7)
+      const xW3 = padL + (3 / 16.0) * plotW;
+      const xW7 = padL + (7 / 16.0) * plotW;
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.08)';
+      ctx.fillRect(xW3, padT, xW7 - xW3, plotH);
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.7)';
+      ctx.font = '10px Outfit';
+      ctx.fillText('⚡ Critical Drop-out Cliff (Weeks 3-7)', xW3 + 8, padT + 20);
+    }
+
+    // Event Listeners
+    [sliderSla, sliderHours, sliderBudget].forEach(s => {
+      s.addEventListener('input', updateSimulation);
+    });
+
+    window.addEventListener('resize', () => {
+      updateSimulation();
+    });
+
+    // Initial render
+    updateSimulation();
+  </script>
+</body>
+</html>

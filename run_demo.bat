@@ -22,7 +22,7 @@ if %ERRORLEVEL% NEQ 0 (
     )
 )
 
-echo [1/4] Generando dataset sintetico calibrado (50,000 registros)...
+echo [1/8] Generando dataset sintetico calibrado (50,000 registros)...
 %PY_CMD% src\data_generator.py --records 50000 --output data\raw_dataset.parquet
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el generador de datos.
@@ -30,7 +30,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [2/7] Ejecutando Motor Analitico Core (Kaplan-Meier, Tablas Actuariales y Hazard Ratios)...
+echo [2/8] Ejecutando Motor Analitico Core (Kaplan-Meier, Tablas Actuariales y Hazard Ratios)...
 %PY_CMD% src\core_engine.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el motor analitico.
@@ -38,7 +38,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [3/7] Entrenando Motor de Machine Learning de Supervivencia y Calibracion IPCW...
+echo [3/8] Entrenando Motor de Machine Learning de Supervivencia y Calibracion IPCW...
 %PY_CMD% src\survival_ml.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el motor de Machine Learning de supervivencia.
@@ -46,7 +46,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [4/7] Ejecutando Telemetria Longitudinal y Landmark Analysis en Semanas Criticas (3, 5, 7)...
+echo [4/8] Ejecutando Telemetria Longitudinal y Landmark Analysis en Semanas Criticas (3, 5, 7)...
 %PY_CMD% src\longitudinal_engine.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el motor de telemetria longitudinal y landmark analysis.
@@ -54,7 +54,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [5/7] Ejecutando Motor Causal de Uplift y Optimizador Knapsack de Presupuesto de Mentoria...
+echo [5/8] Ejecutando Motor Causal de Uplift y Optimizador Knapsack de Presupuesto de Mentoria...
 %PY_CMD% src\causal_uplift_engine.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el motor causal de uplift y optimizador knapsack.
@@ -62,7 +62,15 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [6/7] Ejecutando Suite Automatizada de Pruebas Unitarias (Pytest: 21 tests)...
+echo [6/8] Ejecutando Motor de Incertidumbre Conformal y Cotas de Supervivencia al 90%%...
+%PY_CMD% src\conformal_engine.py
+if %ERRORLEVEL% NEQ 0 (
+    echo [ERROR] Fallo en el motor de incertidumbre conformal.
+    exit /b %ERRORLEVEL%
+)
+
+echo.
+echo [7/8] Ejecutando Suite Automatizada de Pruebas Unitarias (Pytest: 27 tests)...
 %PY_CMD% -m pytest tests\ -v
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Pruebas unitarias fallidas.
@@ -70,7 +78,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [7/7] Ejecutando Benchmarks Cuantitativos de Latencia y Memoria (50 iteraciones)...
+echo [8/8] Ejecutando Benchmarks Cuantitativos de Latencia y Memoria (50 iteraciones)...
 %PY_CMD% tests\benchmark.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el benchmark de latencia.
@@ -78,6 +86,9 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo ======================================================================
-echo  [OK] Ejecucion Exitosa: Pipeline, Survival ML, Landmarks, Uplift y 21 Tests al 100%%
+echo  [OK] Ejecucion Exitosa: Pipeline, Survival ML, Landmarks, Uplift, Conformal y 27 Tests al 100%%
+echo  [WEB] Para lanzar el Simulador Web Interactivo:
+echo        %PY_CMD% src\web_dashboard.py --timeout=0
+echo        o abrir directamente web\index.html en el navegador.
 echo ======================================================================
 endlocal
