@@ -90,6 +90,20 @@ Donde $\mathcal{H}_i(t_L)$ incorpora la inercia longitudinal del estudiante:
 - $\text{Aceleración de Entrega de Tareas (Lag Acceleration): } \frac{d^2(\text{lag})}{dt^2}$
 - Progresión del C-Index dinámico: **Semana 3 ($0.815$) $\to$ Semana 5 ($0.865$) $\to$ Semana 7 ($0.915$)**.
 
+### H. Estimación Contrafactual de Uplift Causal e Inferencia de Presupuesto (Knapsack)
+- **Efecto Causal Individual del Tratamiento (ITE):**
+  $$\hat{\tau}_i = \mathbb{E}[S(t=16 \mid do(A=1), x_i)] - \mathbb{E}[S(t=16 \mid do(A=0), x_i)]$$
+  Donde $do(A=1)$ representa la intervención proactiva de mentoría 1-a-1 (reducción de latencia de feedback a $\le 8$h y remediación de retraso).
+- **Segmentación en 4 Cuadrantes de Uplift:**
+  1. **Persuadables ($\hat{\tau}_i \ge 0.15$):** 18,071 candidatos (36.1%). Foco exclusivo de mentoría.
+  2. **Sure Things ($S_0 \ge 0.70$):** 7,128 candidatos (14.3%). Gradúan sin intervención adicional.
+  3. **Lost Causes ($S_1 \le 0.35$):** 4,005 candidatos (8.0%). Requieren nivelación previa o diferimiento.
+  4. **Moderate Responders ($0.05 \le \hat{\tau}_i < 0.15$):** 20,529 candidatos (41.1%). Talleres asíncronos.
+- **Optimización Knapsack de Capacidad Finita de Mentores:**
+  $$\max_{\boldsymbol{\pi}} \sum_{i=1}^N \pi_i \cdot \hat{\tau}_i \cdot V_{\text{tuition}} \quad \text{s.t.} \quad \sum_{i=1}^N \pi_i \cdot c_i \le B, \quad \pi_i \in \{0, 1\}$$
+  Con $V_{\text{tuition}} = \$4,500$ USD, $c_i = 3.0$ horas ($\$135$ USD).
+  - Escenario 3,000 horas: 1,000 estudiantes tratados $\to$ **410.9 graduados rescatados $\to$ $\$1.85\text{M}$ USD en colegiaturas salvadas ($1,269.6\%$ ROI neto)**.
+
 ---
 
 ## 📊 4. Guía de Integración para Tableau y Power BI
@@ -105,6 +119,9 @@ erDiagram
     FACT_STUDENT_SURVIVAL ||--o{ DIM_SURVIVAL_MODEL_EVALUATION : "validates calibration"
     FACT_STUDENT_SURVIVAL ||--o{ FACT_STUDENT_LANDMARK_ALERTS : "tracks alerts"
     FACT_STUDENT_LANDMARK_ALERTS }o--|| DIM_LANDMARK_MODELS_EVALUATION : "measures horizon"
+    FACT_STUDENT_SURVIVAL ||--o{ FACT_STUDENT_CAUSAL_PRESCRIPTIONS : "prescribes uplift"
+    FACT_STUDENT_CAUSAL_PRESCRIPTIONS }o--|| DIM_CAUSAL_UPLIFT_SEGMENTS : "categorizes"
+    DIM_CAUSAL_UPLIFT_SEGMENTS ||--o{ DIM_KNAPSACK_BUDGET_ALLOCATIONS : "allocates"
 
     FACT_STUDENT_SURVIVAL {
         int candidate_id PK
@@ -118,23 +135,29 @@ erDiagram
         int event_observed
         string survival_risk_stratum
     }
-    FACT_STUDENT_LANDMARK_ALERTS {
+    FACT_STUDENT_CAUSAL_PRESCRIPTIONS {
         int candidate_id FK
-        float landmark_week PK
-        float dynamic_hazard_score
-        float hours_decay_slope
-        float lag_acceleration
-        string risk_tier
-        string primary_diagnostic_cause
-        string prescribed_coordinator_action
+        float s0_baseline_survival
+        float s1_treated_survival
+        float ite_survival_uplift
+        float expected_net_value_usd
+        string uplift_quadrant
+        string knapsack_allocation_status
     }
-    DIM_LANDMARK_MODELS_EVALUATION {
-        float landmark_week PK
-        float horizon_weeks
-        int active_candidates_at_landmark
-        int events_within_horizon
-        float event_rate_pct
-        float concordance_index_c
+    DIM_CAUSAL_UPLIFT_SEGMENTS {
+        string uplift_quadrant PK
+        int candidate_count
+        float avg_baseline_survival
+        float avg_treated_survival
+        float avg_ite_uplift
+        string prescribed_strategic_policy
+    }
+    DIM_KNAPSACK_BUDGET_ALLOCATIONS {
+        float budget_hours PK
+        int candidates_treated
+        float incremental_graduates_rescued
+        float rescued_tuition_revenue_usd
+        float net_roi_percent
     }
 ```
 

@@ -30,7 +30,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [2/6] Ejecutando Motor Analitico Core (Kaplan-Meier, Tablas Actuariales y Hazard Ratios)...
+echo [2/7] Ejecutando Motor Analitico Core (Kaplan-Meier, Tablas Actuariales y Hazard Ratios)...
 %PY_CMD% src\core_engine.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el motor analitico.
@@ -38,7 +38,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [3/6] Entrenando Motor de Machine Learning de Supervivencia y Calibracion IPCW...
+echo [3/7] Entrenando Motor de Machine Learning de Supervivencia y Calibracion IPCW...
 %PY_CMD% src\survival_ml.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el motor de Machine Learning de supervivencia.
@@ -46,7 +46,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [4/6] Ejecutando Telemetria Longitudinal y Landmark Analysis en Semanas Criticas (3, 5, 7)...
+echo [4/7] Ejecutando Telemetria Longitudinal y Landmark Analysis en Semanas Criticas (3, 5, 7)...
 %PY_CMD% src\longitudinal_engine.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el motor de telemetria longitudinal y landmark analysis.
@@ -54,7 +54,15 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [5/6] Ejecutando Suite Automatizada de Pruebas Unitarias (Pytest: 16 tests)...
+echo [5/7] Ejecutando Motor Causal de Uplift y Optimizador Knapsack de Presupuesto de Mentoria...
+%PY_CMD% src\causal_uplift_engine.py
+if %ERRORLEVEL% NEQ 0 (
+    echo [ERROR] Fallo en el motor causal de uplift y optimizador knapsack.
+    exit /b %ERRORLEVEL%
+)
+
+echo.
+echo [6/7] Ejecutando Suite Automatizada de Pruebas Unitarias (Pytest: 21 tests)...
 %PY_CMD% -m pytest tests\ -v
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Pruebas unitarias fallidas.
@@ -62,7 +70,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [6/6] Ejecutando Benchmarks Cuantitativos de Latencia y Memoria (50 iteraciones)...
+echo [7/7] Ejecutando Benchmarks Cuantitativos de Latencia y Memoria (50 iteraciones)...
 %PY_CMD% tests\benchmark.py
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Fallo en el benchmark de latencia.
@@ -70,6 +78,6 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo ======================================================================
-echo  [OK] Ejecucion Exitosa: Pipeline, Survival ML, Landmarks y 16 Tests al 100%%
+echo  [OK] Ejecucion Exitosa: Pipeline, Survival ML, Landmarks, Uplift y 21 Tests al 100%%
 echo ======================================================================
 endlocal
